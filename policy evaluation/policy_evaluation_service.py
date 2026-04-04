@@ -1,4 +1,4 @@
-from policy import Policy
+from policy import RulePolicy
 from policy_service import PolicyService
 
 
@@ -10,7 +10,7 @@ class PolicyEvalutaionService:
         self.ps.create_rule_policy(value, variable, comparison_operator)
     def create_policy_via_rules(self, value, variable, comparison_operator):
         r1 = self.ps.create_rule(value=value, variable=variable, comparison_operator=comparison_operator)
-        p1 = Policy(r1)
+        p1 = RulePolicy(r1)
         self.ps.policies[p1.id] = p1
         return p1
     def create_policies_with_operator(self, p1, p2, operator):
