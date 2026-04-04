@@ -5,7 +5,7 @@ class ComparisonOperatorFactory:
 
     def evaluate(self, saved, current, operator):
         match operator:
-            case ComparisonOperators.EQ: return saved == current
-            case ComparisonOperators.LTE: return saved <= current
-            case ComparisonOperators.GTE: return saved >= current
+            case ComparisonOperators.EQ: return current == saved
+            case ComparisonOperators.LTE: return current <= saved
+            case ComparisonOperators.GTE: return current >= saved
             case _ : raise ValueError("Invalid type of operator")

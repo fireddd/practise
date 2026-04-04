@@ -14,4 +14,4 @@ class Rule(evlaution_express):
         if(currentvalue is None):
             return True
         savedvalue = self.value
-        self.cof.evaluate(savedvalue, currentvalue, self.comparison_operator)
+        return self.cof.evaluate(savedvalue, currentvalue, self.comparison_operator)
