@@ -10,15 +10,40 @@ A rule-based coupon and promotion system with REST APIs.
 - Evaluate cart with multiple stacked coupons (FIFO order)
 - Min cart value enforcement per coupon
 
-## Setup
+## Run with Docker (recommended)
+
+Requires Docker Desktop.
 
 ```bash
-pip install fastapi uvicorn requests
+cd coupon_system
+docker compose up --build -d
 ```
 
-## Run the server
+This starts:
+- **Aerospike** (database) on port 3000
+- **FastAPI app** on port 8000
+
+Swagger docs: http://localhost:8000/docs
+
+To stop:
 
 ```bash
+docker compose down
+```
+
+## Run locally (without Docker)
+
+```bash
+pip install fastapi uvicorn requests aerospike
+```
+
+Requires a running Aerospike instance with a `coupon_system` namespace.
+
+```bash
+# Set Aerospike host (defaults to localhost:3000)
+export AEROSPIKE_HOST=localhost
+export AEROSPIKE_PORT=3000
+
 # From the project root (parent of coupon_system/)
 uvicorn coupon_system.api.app:app --port 8000
 ```

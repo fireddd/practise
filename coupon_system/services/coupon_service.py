@@ -5,14 +5,14 @@ from coupon_system.models.cart import Cart
 from coupon_system.models.coupon import Coupon
 from coupon_system.models.rule_evaluation_context import RuleEvaluationContext
 from coupon_system.calculators.discount_calculator_factory import DiscountCalculatorFactory
+from coupon_system.repositories.coupon_repository import CouponRepository
 from coupon_system.services.rule_service import RuleService
 
 
 class CouponService:
-    def __init__(self, rule_service: RuleService):
-        self._coupons: dict[str, Coupon] = {}
-        self._code_index: dict[str, str] = {}  # coupon_code -> coupon_id
+    def __init__(self, rule_service: RuleService, repository: CouponRepository):
         self._rule_service = rule_service
+        self._repository = repository
 
     def create_coupon(self, coupon_code: str, value: float, coupon_type: CouponType,
                       min_cart_value: float, rule_id: str) -> Coupon:
@@ -21,31 +21,24 @@ class CouponService:
             coupon_id=coupon_id, coupon_code=coupon_code, value=value,
             coupon_type=coupon_type, min_cart_value=min_cart_value, rule_id=rule_id,
         )
-        self._coupons[coupon_id] = coupon
-        self._code_index[coupon_code] = coupon_id
+        self._repository.save(coupon)
         return coupon
 
     def get_coupon(self, coupon_code: str) -> Coupon | None:
-        coupon_id = self._code_index.get(coupon_code)
-        if coupon_id is None:
-            return None
-        return self._coupons.get(coupon_id)
+        return self._repository.get_by_code(coupon_code)
 
     def update_coupon(self, coupon_id: str, **kwargs) -> Coupon | None:
-        coupon = self._coupons.get(coupon_id)
+        coupon = self._repository.get(coupon_id)
         if coupon is None:
             return None
         for key, val in kwargs.items():
             if hasattr(coupon, key):
                 setattr(coupon, key, val)
+        self._repository.save(coupon)
         return coupon
 
     def delete_coupon(self, coupon_id: str) -> bool:
-        coupon = self._coupons.pop(coupon_id, None)
-        if coupon is None:
-            return False
-        self._code_index.pop(coupon.coupon_code, None)
-        return True
+        return self._repository.delete(coupon_id)
 
     def evaluate_cart(self, cart: Cart, coupon_codes: list[str]) -> tuple[float, list[str]]:
         context = RuleEvaluationContext(amount=cart.amount, user_id=cart.user_id)

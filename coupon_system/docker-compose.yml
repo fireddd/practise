@@ -1,0 +1,28 @@
+services:
+  aerospike:
+    image: aerospike/aerospike-server:latest
+    container_name: coupon-aerospike
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./infra/aerospike.conf:/opt/aerospike/custom.conf:ro
+    entrypoint: ["asd", "--foreground", "--config-file", "/opt/aerospike/custom.conf"]
+    healthcheck:
+      test: ["CMD", "asinfo", "-v", "status"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coupon-app
+    ports:
+      - "8000:8000"
+    environment:
+      - AEROSPIKE_HOST=aerospike
+      - AEROSPIKE_PORT=3000
+    depends_on:
+      aerospike:
+        condition: service_healthy

@@ -1,0 +1,3 @@
+from coupon_system.repositories.rule_repository import RuleRepository
+from coupon_system.repositories.coupon_repository import CouponRepository
+from coupon_system.repositories.promotion_repository import PromotionRepository
