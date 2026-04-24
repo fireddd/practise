@@ -1,0 +1,5 @@
+from .winning_strategy import WinningStrategy
+from .left_diagonal_strategy import LeftDiagonalStrategy
+from .right_diagonal_strategy import RightDiagonalStrategy
+from .horizontal_strategy import HorizontalStrategy
+from .vertical_strategy import VerticalStrategy
